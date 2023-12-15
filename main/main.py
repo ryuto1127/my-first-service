@@ -1,11 +1,9 @@
-from openai import OpenAI
+import openai
 import streamlit as st
 import random
 
-api_key = st.secrets["openai_api_key"]
+openai.api_key = st.secrets["openai_api_key"]
 
-# OpenAIライブラリを初期化
-openai.api_key = api_key
 
 # タイトルを設定
 st.title("Create An Image Of Your Feelings.")
@@ -91,7 +89,7 @@ if st.button("Let's Start"):
     # 選択されたテーマに基づいて質問を生成
     for theme in selected_themes:
         prompt = f"Please create a simple and engaging question about {theme}. The question should be easy to answer and encourage a detailed response."
-        chat_response = client.completions.create(model="text-davinci-003",
+        chat_response = openai.completions.create(model="text-davinci-003",
         prompt=prompt,
         max_tokens=60,
         temperature=1.5)
