@@ -1,6 +1,6 @@
 from openai import OpenAI
 
-client = OpenAI(api_key='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')
+
 import streamlit as st
 import random
 
