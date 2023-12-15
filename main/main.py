@@ -2,6 +2,11 @@ from openai import OpenAI
 import streamlit as st
 import random
 
+api_key = st.secrets["openai_api_key"]
+
+# OpenAIライブラリを初期化
+openai.api_key = api_key
+
 # タイトルを設定
 st.title("Create An Image Of Your Feelings.")
 
