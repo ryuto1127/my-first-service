@@ -123,8 +123,3 @@ if all(st.session_state.answers):
         image_url = response.data[0].url
         st.image(image_url)
 
-
-
-import sys
-print(sys.path)
-
