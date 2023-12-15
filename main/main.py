@@ -1,4 +1,6 @@
-import openai
+from openai import OpenAI
+
+client = OpenAI(api_key='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')
 import streamlit as st
 import random
 
@@ -10,16 +12,13 @@ st.markdown("""
 """)
 
 # OpenAIのAPIキーを設定
-openai.api_key = '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'
 
 # プロンプト最適化関数
 def optimize_prompt_for_dalle(prompt):
     # 画像生成に適した形にプロンプトを変換
-    optimized_prompt = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=f"Rewrite this to be more vivid and detailed for image generation: {prompt}",
-        max_tokens=60
-    )
+    optimized_prompt = client.completions.create(model="text-davinci-003",
+    prompt=f"Rewrite this to be more vivid and detailed for image generation: {prompt}",
+    max_tokens=60)
     return optimized_prompt.choices[0].text.strip()
 
 # セッション状態の初期化
@@ -89,12 +88,10 @@ if st.button("Let's Start"):
     # 選択されたテーマに基づいて質問を生成
     for theme in selected_themes:
         prompt = f"Please create a simple and engaging question about {theme}. The question should be easy to answer and encourage a detailed response."
-        chat_response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=prompt,
-            max_tokens=60,
-            temperature=1.5
-        )
+        chat_response = client.completions.create(model="text-davinci-003",
+        prompt=prompt,
+        max_tokens=60,
+        temperature=1.5)
         question = chat_response.choices[0].text.strip()
         st.session_state.questions.append(question)
         st.session_state.answers.append("")
@@ -114,12 +111,10 @@ if all(st.session_state.answers):
 
     # 組み合わせたプロンプトで画像生成
     if st.button("Create Image"):
-        response = openai.Image.create(
-            prompt=combined_prompt,
-            n=1,
-            size="1024x1024",
-            model="dall-e-3"
-        )
+        response = client.images.generate(prompt=combined_prompt,
+        n=1,
+        size="1024x1024",
+        model="dall-e-3")
         image_url = response.data[0].url
         st.image(image_url)
 
