@@ -9,7 +9,7 @@ openai.api_key = st.secrets["streamlit_secrets"]["openai_api_key"]
 st.title("EmoArtify")
 
 st.markdown("""
-### By Ryuto
+### By a
 """)
 
 # OpenAIのAPIキーを設定
