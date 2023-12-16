@@ -92,7 +92,7 @@ if st.button("Let's Start"):
         chat_response = openai.completions.create(model="text-davinci-003",
         prompt=prompt,
         max_tokens=60,
-        temperature=1.5)
+        temperature=1.0)
         question = chat_response.choices[0].text.strip()
         st.session_state.questions.append(question)
         st.session_state.answers.append("")
