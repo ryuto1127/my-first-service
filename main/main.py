@@ -29,6 +29,8 @@ if 'questions' not in st.session_state:
     st.session_state.questions = []
 if 'answers' not in st.session_state:
     st.session_state.answers = []
+if 'show_create_image_button' not in st.session_state:
+    st.session_state.show_create_image_button = False
 
 # 質問の数
 num_questions = 3
@@ -38,6 +40,7 @@ if st.button("Let's Start"):
     st.session_state.input_key += 1
     st.session_state.questions = []
     st.session_state.answers = []
+    st.session_state.show_create_image_button = False
 
     # 質問のテーマ
     question_themes = [
@@ -98,13 +101,16 @@ if st.button("Let's Start"):
         st.session_state.answers.append("")
 
 # ユーザーからの回答を取得
-for i in range(len(st.session_state.questions)):
-    if st.session_state.questions:
-        st.session_state.answers[i] = st.text_input(f"Question {i+1}: {st.session_state.questions[i]}", key=f"user_answer_{st.session_state.input_key}_{i}")
+if st.session_state.questions:
+    for i in range(len(st.session_state.questions)):
+        answer = st.text_input(f"Question {i+1}: {st.session_state.questions[i]}", key=f"user_answer_{st.session_state.input_key}_{i}")
+        st.session_state.answers.append(answer)
 
-# すべての質問に回答がある場合に画像生成
-if all(st.session_state.answers):
-    # 各回答を最適化
+# すべての質問に回答があるかチェック
+if all(st.session_state.answers) and not st.session_state.show_create_image_button:
+    st.session_state.show_create_image_button = True
+
+if st.session_state.show_create_image_button:
     optimized_answers = [optimize_prompt_for_dalle(answer) for answer in st.session_state.answers]
 
     # 最適化された回答を組み合わせて一つのプロンプトを形成
