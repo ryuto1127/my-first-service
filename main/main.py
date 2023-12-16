@@ -6,7 +6,7 @@ openai.api_key = st.secrets["streamlit_secrets"]["openai_api_key"]
 
 
 # タイトルを設定
-st.title("Create An Image Of Your Feelings.")
+st.title("EmoArtify")
 
 st.markdown("""
 ### By Ryuto
