@@ -2,7 +2,7 @@ import openai
 import streamlit as st
 import random
 
-openai.api_key = st.secrets["openai_api_key"]
+client = OpenAI( st.secrets["OPENAI_API_KEY"] )
 
 
 # タイトルを設定
@@ -17,7 +17,7 @@ st.markdown("""
 # プロンプト最適化関数
 def optimize_prompt_for_dalle(prompt):
     # 画像生成に適した形にプロンプトを変換
-    optimized_prompt = openai.Completion.create(
+    completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         prompt=f"Rewrite this to be more vivid and detailed for image generation: {prompt}",
         max_tokens=60
@@ -91,7 +91,7 @@ if st.button("Let's Start"):
     # 選択されたテーマに基づいて質問を生成
     for theme in selected_themes:
         prompt = f"Please create a simple and engaging question about {theme}. The question should be easy to answer and encourage a detailed response.Please create questions using only simple English words and straightforward phrasing. The questions should be easy to understand, using basic vocabulary and clear sentence structures. Avoid complex terms, technical jargon, and lengthy explanations. Focus on direct and concise wording to ensure clarity and ease of comprehension. The goal is to generate questions that are accessible to users with varying levels of English proficiency."
-        chat_response = openai.Completion.create(model="gpt-3.5-turbo",
+        create = client.chat.completions.create(model="gpt-3.5-turbo",
         prompt=prompt,
         max_tokens=60,
         temperature=1.0)
