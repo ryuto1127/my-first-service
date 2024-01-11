@@ -18,7 +18,7 @@ st.markdown("""
 def optimize_prompt_for_dalle(prompt):
     # 画像生成に適した形にプロンプトを変換
     optimized_prompt = openai.ChatCompletion.create(
-        model="text-davinci-003",
+        model="text-embedding-ada-002",
         prompt=f"Rewrite this to be more vivid and detailed for image generation: {prompt}",
         max_tokens=60
     )
@@ -91,7 +91,7 @@ if st.button("Let's Start"):
     # 選択されたテーマに基づいて質問を生成
     for theme in selected_themes:
         prompt = f"Please create a simple and engaging question about {theme}. The question should be easy to answer and encourage a detailed response.Please create questions using only simple English words and straightforward phrasing. The questions should be easy to understand, using basic vocabulary and clear sentence structures. Avoid complex terms, technical jargon, and lengthy explanations. Focus on direct and concise wording to ensure clarity and ease of comprehension. The goal is to generate questions that are accessible to users with varying levels of English proficiency."
-        chat_response = openai.completions.create(model="text-davinci-003",
+        chat_response = openai.ChatCompletion.create(model="text-embedding-ada-002",
         prompt=prompt,
         max_tokens=60,
         temperature=1.0)
@@ -115,7 +115,7 @@ if all(st.session_state.answers):
     # 組み合わせたプロンプトで画像生成
     if st.button("Create Image"):
         # 画像生成のために DALL-E API を使用
-        response = openai.Image.create(
+        response = openai.Image.create(model="dall-e-3"
             prompt=combined_prompt,
             n=1,
             size="1024x1024"
