@@ -115,10 +115,12 @@ if all(st.session_state.answers):
     # 組み合わせたプロンプトで画像生成
     if st.button("Create Image"):
         # 画像生成のために DALL-E API を使用
-        response = openai.Image.create(model="dall-e-3"
+        response = openai.Image.create(
+            model="dall-e-3",
             prompt=combined_prompt,
             n=1,
             size="1024x1024"
         )
         image_url = response.data[0].url
         st.image(image_url)
+
