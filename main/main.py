@@ -17,9 +17,11 @@ st.markdown("""
 # プロンプト最適化関数
 def optimize_prompt_for_dalle(prompt):
     # 画像生成に適した形にプロンプトを変換
-    optimized_prompt = openai.completions.create(model="text-davinci-003",
-    prompt=f"Rewrite this to be more vivid and detailed for image generation: {prompt}",
-    max_tokens=60)
+    optimized_prompt = openai.ChatCompletion.create(
+        model="text-davinci-003",
+        prompt=f"Rewrite this to be more vivid and detailed for image generation: {prompt}",
+        max_tokens=60
+    )
     return optimized_prompt.choices[0].text.strip()
 
 # セッション状態の初期化
@@ -112,9 +114,11 @@ if all(st.session_state.answers):
 
     # 組み合わせたプロンプトで画像生成
     if st.button("Create Image"):
-        response = openai.images.generate(prompt=combined_prompt,
-        n=1,
-        size="1024x1024",
-        model="dall-e-3")
+        # 画像生成のために DALL-E API を使用
+        response = openai.Image.create(
+            prompt=combined_prompt,
+            n=1,
+            size="1024x1024"
+        )
         image_url = response.data[0].url
         st.image(image_url)
