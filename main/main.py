@@ -2,7 +2,7 @@ import openai
 import streamlit as st
 import random
 
-openai.api_key = openai_api_key
+openai.api_key = st.secrets['streamlit_secrets']['api_key']
 
 
 # タイトルを設定
