@@ -17,7 +17,7 @@ st.markdown("""
 # プロンプト最適化関数
 def optimize_prompt_for_dalle(prompt):
     # 画像生成に適した形にプロンプトを変換
-    completion = openai.Completion.create(
+    completion = openai.ChatCompletion.create(
         engine="gpt-3.5-turbo",
         prompt=f"Rewrite this to be more vivid and detailed for image generation: {prompt}",
         max_tokens=60
@@ -91,7 +91,7 @@ if st.button("Let's Start"):
     # 選択されたテーマに基づいて質問を生成
     for theme in selected_themes:
         prompt = f"Please create a simple and engaging question about {theme}. ..."
-        chat_response = openai.Completion.create(
+        chat_response = openai.ChatCompletion.create(
             engine="gpt-3.5-turbo",
             prompt=prompt,
             max_tokens=60,
