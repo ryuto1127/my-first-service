@@ -2,7 +2,7 @@ import openai
 import streamlit as st
 import random
 
-client = OpenAI( st.secrets["OPENAI_API_KEY"] )
+openai.api_key = st.secrets["streamlit_secrets"]["openai_api_key"]
 
 
 # タイトルを設定
@@ -17,12 +17,12 @@ st.markdown("""
 # プロンプト最適化関数
 def optimize_prompt_for_dalle(prompt):
     # 画像生成に適した形にプロンプトを変換
-    completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+    completion = openai.Completion.create(
+        engine="gpt-3.5-turbo",
         prompt=f"Rewrite this to be more vivid and detailed for image generation: {prompt}",
         max_tokens=60
     )
-    return optimized_prompt.choices[0].text.strip()
+    return completion.choices[0].text.strip()
 
 # セッション状態の初期化
 if 'input_key' not in st.session_state:
@@ -90,11 +90,13 @@ if st.button("Let's Start"):
 
     # 選択されたテーマに基づいて質問を生成
     for theme in selected_themes:
-        prompt = f"Please create a simple and engaging question about {theme}. The question should be easy to answer and encourage a detailed response.Please create questions using only simple English words and straightforward phrasing. The questions should be easy to understand, using basic vocabulary and clear sentence structures. Avoid complex terms, technical jargon, and lengthy explanations. Focus on direct and concise wording to ensure clarity and ease of comprehension. The goal is to generate questions that are accessible to users with varying levels of English proficiency."
-        create = client.chat.completions.create(model="gpt-3.5-turbo",
-        prompt=prompt,
-        max_tokens=60,
-        temperature=1.0)
+        prompt = f"Please create a simple and engaging question about {theme}. ..."
+        chat_response = openai.Completion.create(
+            engine="gpt-3.5-turbo",
+            prompt=prompt,
+            max_tokens=60,
+            temperature=1.0
+        )
         question = chat_response.choices[0].text.strip()
         st.session_state.questions.append(question)
         st.session_state.answers.append("")
@@ -116,7 +118,7 @@ if all(st.session_state.answers):
     if st.button("Create Image"):
         # 画像生成のために DALL-E API を使用
         response = openai.Image.create(
-            model="dall-e-3",
+            engine="dall-e-3",
             prompt=combined_prompt,
             n=1,
             size="1024x1024"
