@@ -2,34 +2,31 @@ import openai
 import streamlit as st
 import random
 
-openai.api_key = st.secrets['streamlit_secrets']['api_key']
-
+# OpenAI API キーを設定
+openai.api_key = st.secrets["streamlit_secrets"]["api_key"]
 
 # タイトルを設定
 st.title("EmoArtify")
 
-st.markdown("""
-### By Ryuto
-""")
-
-# OpenAIのAPIキーを設定
+st.markdown("### By Ryuto")
 
 # プロンプト最適化関数
 def optimize_prompt_for_dalle(prompt):
     # 画像生成に適した形にプロンプトを変換
-    completion = openai.ChatCompletion.create(
-        engine="gpt-3.5-turbo",
+    completion = openai.Completion.create(
+        engine="text-davinci-003",  # GPT-3 を使用
         prompt=f"Rewrite this to be more vivid and detailed for image generation: {prompt}",
-        max_tokens=60
+        max_tokens=60,
+        n=1
     )
     return completion.choices[0].text.strip()
 
 # セッション状態の初期化
-if 'input_key' not in st.session_state:
+if "input_key" not in st.session_state:
     st.session_state.input_key = 0
-if 'questions' not in st.session_state:
+if "questions" not in st.session_state:
     st.session_state.questions = []
-if 'answers' not in st.session_state:
+if "answers" not in st.session_state:
     st.session_state.answers = []
 
 # 質問の数
@@ -43,59 +40,23 @@ if st.button("Let's Start"):
 
     # 質問のテーマ
     question_themes = [
-    "current emotional state",
-    "recent enjoyable activity",
-    "favorite memory",
-    "an interesting dream",
-    "a personal achievement",
-    "a beloved hobby",
-    "a cherished childhood memory",
-    "a place you'd love to visit",
-    "a favorite season and why",
-    "a relaxing activity",
-    "a memorable book or movie",
-    "an important life lesson",
-    "a favorite animal and why",
-    "an inspiring historical figure",
-    "a beautiful scenery you've seen",
-    "a goal or dream for the future",
-    "a favorite cuisine or dish",
-    "a memorable celebration or event",
-    "an exciting adventure or experience",
-    "a cherished family tradition",
-    "a moment of pride",
-    "a funny or embarrassing memory",
-    "a favorite work of art",
-    "a musical or theatrical performance",
-    "a meaningful friendship",
-    "a hobby you'd like to try",
-    "a favorite sport or game",
-    "a moment of unexpected joy",
-    "a person who has influenced your life",
-    "a favorite city or country",
-    "a historical event you find fascinating",
-    "a technological innovation you admire",
-    "a book or movie that changed your perspective",
-    "a challenging experience and how you overcame it",
-    "a dream vacation destination",
-    "a moment of peace",
-    "a favorite childhood activity",
-    "an object with sentimental value",
-    "a recent learning experience",
-    "an outdoor experience you enjoyed"
+        "current emotional state",
+        "recent enjoyable activity",
+        # 他のテーマを追加
     ]
 
-    # 質問の数をnum_questionsに制限
+    # 質問の数を num_questions に制限
     selected_themes = random.sample(question_themes, num_questions)
 
     # 選択されたテーマに基づいて質問を生成
     for theme in selected_themes:
         prompt = f"Please create a simple and engaging question about {theme}. ..."
         chat_response = openai.ChatCompletion.create(
-            engine="gpt-3.5-turbo",
+            engine="text-davinci-003",  # GPT-3 を使用
             prompt=prompt,
             max_tokens=60,
-            temperature=1.0
+            temperature=1.0,
+            n=1
         )
         question = chat_response.choices[0].text.strip()
         st.session_state.questions.append(question)
@@ -116,13 +77,17 @@ if all(st.session_state.answers):
 
     # 組み合わせたプロンプトで画像生成
     if st.button("Create Image"):
-        # 画像生成のために DALL-E API を使用
-        response = openai.Image.create(
-            engine="dall-e-3",
-            prompt=combined_prompt,
-            n=1,
-            size="1024x1024"
-        )
-        image_url = response.data[0].url
-        st.image(image_url)
-
+        try:
+            # 画像生成のために DALL-E API を使用
+            response = openai.Image.create(
+                engine="text-to-image-dall-e-3",  # text-to-image-dall-e-3 を使用
+                prompt=combined_prompt,
+                n=1,
+                size="1024x1024"
+            )
+            image_url = response.data[0].url
+            st.image(image_url)
+        except openai.error.InvalidRequestError as e:
+            st.error("エラーが発生しました。もう一度お試しください。")
+        except Exception as e:
+            st.error("予期せぬエラーが発生しました。後でもう一度お試しください。")
